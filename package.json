@@ -2,16 +2,25 @@
   "name": "cosmic-slice",
   "version": "1.0.0",
   "private": true,
-  "description": "Cosmic Slice game and admin server backed by MongoDB",
+  "description": "Cosmic Slice virtual gaming platform backed by MongoDB and Socket.IO",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node tests/run-tests.js"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.7",
-    "mongodb": "^6.15.0"
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.15.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.4"
   }
 }

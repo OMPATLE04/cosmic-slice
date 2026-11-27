@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Cosmic Slice</title>
+  <title>Nakshatra Cut — Virtual Gaming Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,7 +14,7 @@
     <main class="game-shell" id="gameShell">
       <canvas id="gameCanvas" aria-label="Cosmic Slice game canvas"></canvas>
 
-      <!-- Top HUD (Gameplay) -->
+      <!-- Top HUD (Active Gameplay) -->
       <header class="hud dimmed" id="hud" aria-live="polite">
         <div class="hud-left">
           <div class="score-pill">
@@ -23,7 +23,11 @@
           </div>
           <div class="perf-pill" id="perfPill">
             <span class="pill-value" id="perfVal">0%</span>
-            <span class="tier-chip" id="liveTierChip">₹0</span>
+            <span class="tier-chip" id="liveModeChip">QUICK</span>
+          </div>
+          <div class="perf-pill hidden" id="oppHudPill">
+            <span class="pill-label" id="oppHudName">OPP</span>
+            <span class="pill-value" id="oppScoreVal">0</span>
           </div>
         </div>
 
@@ -45,57 +49,82 @@
         </div>
       </header>
 
-      <!-- Title Overlay -->
+      <!-- Countdown Overlay (3..2..1..SLICE!) -->
+      <section class="countdown-overlay hidden" id="countdownOverlay" aria-live="assertive">
+        <div class="countdown-card">
+          <span class="countdown-mode" id="countdownModeLabel">QUICK PLAY</span>
+          <div class="countdown-num" id="countdownNum">3</div>
+          <p class="countdown-sub" id="countdownSub">Defend the Moon!</p>
+        </div>
+      </section>
+
+      <!-- Title / Landing Overlay -->
       <section class="overlay title-overlay" id="titleOverlay">
         <div class="title-topbar">
-          <div class="wallet-pill" title="Total Verified Rewards Credited">
+          <button class="wallet-pill interactive-pill" id="walletPillBtn" type="button" title="Open Wallet">
             <span class="pill-label">WALLET</span>
-            <span class="pill-value" id="walletTotalVal">₹0</span>
-          </div>
+            <span class="pill-value" id="walletTotalVal">₹1,000</span>
+          </button>
           <div class="title-nav-btns">
-            <button class="mini-btn" id="openInfoBtn" type="button">Prizes &amp; History</button>
+            <button class="mini-btn" id="openDailyBtn" type="button">Daily</button>
+            <button class="mini-btn" id="openLeaderboardBtn" type="button">Ranks</button>
+            <button class="mini-btn" id="openAuthOrProfileBtn" type="button">Login</button>
             <a class="mini-btn" href="admin.html">Admin</a>
           </div>
         </div>
 
         <div class="title-header">
-          <span class="title-kicker">45s SKILL CHALLENGE</span>
-          <h1 class="game-title">COSMIC SLICE</h1>
+          <span class="title-kicker" id="titleKicker">45s NAKSHATRA ARCADE</span>
+          <h1 class="game-title">NAKSHATRA CUT</h1>
+          <p class="user-greeting hidden" id="userGreeting"></p>
         </div>
 
         <div class="title-spacer"></div>
 
         <div class="title-bottom">
-          <p class="slice-prompt" id="slicePrompt">slice to begin</p>
+          <p class="slice-prompt" id="slicePrompt">slice meteoroid or choose mode</p>
+
+          <div class="mode-cta-row">
+            <button class="continue-btn compact-cta" id="ctaQuickPlayBtn" type="button">Quick Play</button>
+            <button class="continue-btn compact-cta duel-cta" id="ctaDuelBtn" type="button">Duel Arena</button>
+          </div>
+
           <div class="legend-row">
             <span class="legend-chip good">
-              <span class="dot comet-dot"></span> Slice Comets
+              <span class="dot comet-dot"></span> Slice Meteoroids
             </span>
             <span class="legend-chip bad">
-              <span class="dot skull-dot"></span> Avoid Skulls
+              <span class="dot skull-dot"></span> Avoid Plasma Mines
             </span>
             <span class="legend-chip shield">
               <span class="dot shield-dot"></span> <span id="shieldLegendText">3 Shields</span>
             </span>
           </div>
+
+          <div class="sub-nav-row">
+            <button class="mini-btn" id="openDashboardBtn" type="button">Dashboard</button>
+            <button class="mini-btn" id="openHistoryBtn" type="button">History</button>
+            <button class="mini-btn" id="openSettingsBtn" type="button">Profile &amp; Settings</button>
+          </div>
+          <p class="virtual-disclaimer">Nakshatra Cut • Demo Virtual Wallet • Non-withdrawable</p>
         </div>
       </section>
 
-      <!-- Game Over / Victory Overlay -->
+      <!-- Game Over / Victory / Duel Result Overlay -->
       <section class="overlay gameover-overlay hidden" id="gameoverOverlay">
         <div class="gameover-card">
-          <span class="outcome-badge" id="outcomeBadge">ROUND LOST</span>
-          <h2 class="lost-title" id="resultTitle">You lost!</h2>
-          <p class="lost-subtitle" id="lostReason">Better luck next time</p>
+          <span class="outcome-badge" id="outcomeBadge">ROUND COMPLETE</span>
+          <h2 class="lost-title" id="resultTitle">Result</h2>
+          <p class="lost-subtitle" id="lostReason">Calculating verified result...</p>
 
           <div class="stats-row">
             <div class="stat-box">
-              <span class="stat-label">SCORE</span>
+              <span class="stat-label" id="scoreBoxLabel">SCORE</span>
               <span class="stat-num" id="finalScore">0</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-box">
-              <span class="stat-label">PERF</span>
+              <span class="stat-label" id="midBoxLabel">PERF</span>
               <span class="stat-num" id="finalPct">0%</span>
             </div>
             <div class="stat-divider"></div>
@@ -107,57 +136,249 @@
 
           <div class="meta-card">
             <div class="meta-row">
-              <span>Game ID</span>
+              <span>Match ID</span>
               <code id="finalGameId">-</code>
             </div>
             <div class="meta-row">
-              <span>Tier Matched</span>
+              <span id="metaDetailLabel">Verification</span>
               <strong id="finalTier">-</strong>
             </div>
             <div class="meta-row">
-              <span>Verification</span>
-              <strong id="finalVerified">Validating...</strong>
+              <span>Wallet Balance</span>
+              <strong id="finalVerified">-</strong>
+            </div>
+            <div class="meta-row hidden" id="rngAuditRow">
+              <span>RNG Audit</span>
+              <code id="finalRngAudit">-</code>
             </div>
           </div>
 
           <div class="gameover-actions">
-            <button class="continue-btn" id="continueBtn" type="button">
-              Continue
-            </button>
-            <button class="mini-btn secondary-action" id="resultHistoryBtn" type="button">
-              Prizes &amp; History
-            </button>
+            <button class="continue-btn" id="continueBtn" type="button">Play Again</button>
+            <div class="gameover-secondary-row">
+              <button class="mini-btn secondary-action" id="resultSwitchModeBtn" type="button">Modes</button>
+              <button class="mini-btn secondary-action" id="resultHistoryBtn" type="button">History</button>
+              <button class="mini-btn secondary-action" id="resultHomeBtn" type="button">Home</button>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Transparent Prizes & History Modal -->
-      <section class="modal-backdrop hidden" id="infoModal" role="dialog" aria-modal="true" aria-label="Prize Tiers and History">
-        <div class="modal-card">
+      <!-- Platform Hub Modal (Auth, Dashboard, Modes, Quick Play, Duel, Wallet, Daily, Leaderboard, History, Profile/Settings) -->
+      <section class="modal-backdrop hidden" id="platformModal" role="dialog" aria-modal="true" aria-label="Cosmic Slice Platform">
+        <div class="modal-card platform-card">
           <div class="modal-header">
-            <h3>Prizes &amp; Recent Games</h3>
-            <button class="icon-btn" id="closeInfoBtn" type="button" aria-label="Close">✕</button>
+            <div>
+              <h3 id="modalTitle">Nakshatra Cut Hub</h3>
+              <p class="modal-subtitle" id="modalSubtitle">Nakshatra Cut • Demo Virtual Wallet</p>
+            </div>
+            <button class="icon-btn" id="closeModalBtn" type="button" aria-label="Close">✕</button>
           </div>
 
-          <div class="modal-section">
-            <h4>Performance Reward Tiers</h4>
-            <p class="modal-note">
-              Survive the <strong id="modalDuration">45s</strong> challenge without slicing a skull or exceeding
-              <strong id="modalMistakes">2</strong> mistakes. Rewards depend on verified score vs
-              <strong id="modalTarget">95</strong> pts benchmark. Losing gives ₹0.
-            </p>
-            <div class="tier-list" id="modalTierList"></div>
+          <div class="hub-tabs hidden" id="hubTabs">
+            <button class="tab-pill" data-tab="dashboard" type="button">Dashboard</button>
+            <button class="tab-pill" data-tab="wallet" type="button">Wallet</button>
+            <button class="tab-pill" data-tab="leaderboard" type="button">Ranks</button>
+            <button class="tab-pill" data-tab="profile" type="button">Profile</button>
           </div>
 
-          <div class="modal-section">
-            <h4>Recent Verified Games</h4>
-            <div class="history-list" id="modalHistoryList"></div>
+          <!-- View: Auth (Login & Register) -->
+          <div class="hub-view hidden" id="viewAuth">
+            <div class="auth-switch">
+              <button class="tab-pill active" id="authTabLogin" type="button">Login</button>
+              <button class="tab-pill" id="authTabRegister" type="button">Register (+1,000 Coins)</button>
+            </div>
+
+            <form id="loginForm" class="cosmic-form">
+              <label class="field-label">Username or Email
+                <input class="cosmic-input" type="text" id="loginIdentifier" placeholder="player_one or email@example.com" required />
+              </label>
+              <label class="field-label">Password
+                <input class="cosmic-input" type="password" id="loginPassword" placeholder="Enter your password" required />
+              </label>
+              <button class="continue-btn full-btn" type="submit">Sign In</button>
+            </form>
+
+            <form id="registerForm" class="cosmic-form hidden">
+              <label class="field-label">Username (3–20 letters/numbers)
+                <input class="cosmic-input" type="text" id="regUsername" placeholder="cosmic_blade" pattern="[a-zA-Z0-9_]{3,20}" required />
+              </label>
+              <label class="field-label">Email
+                <input class="cosmic-input" type="email" id="regEmail" placeholder="you@example.com" required />
+              </label>
+              <label class="field-label">Password (min 6 chars)
+                <input class="cosmic-input" type="password" id="regPassword" minlength="6" placeholder="Create password" required />
+              </label>
+              <label class="field-label">Avatar Glow
+                <select class="cosmic-input" id="regAvatarColor">
+                  <option value="#38bdf8">Nakshatra Cyan</option>
+                  <option value="#f59e0b">Solar Saffron</option>
+                  <option value="#34d399">Aurora Emerald</option>
+                  <option value="#6366f1">Astral Indigo</option>
+                  <option value="#fb7185">Nebula Coral</option>
+                </select>
+              </label>
+              <button class="continue-btn full-btn" type="submit">Create Account &amp; Get 1,000 Coins</button>
+            </form>
+
+            <p class="form-status" id="authFormStatus"></p>
+          </div>
+
+          <!-- View: Main Dashboard & Mode Selection -->
+          <div class="hub-view hidden" id="viewDashboard">
+            <div class="profile-banner" id="dashBanner"></div>
+            <div class="dash-stats-grid" id="dashStatsGrid"></div>
+            <div class="mode-cards-grid">
+              <div class="mode-card">
+                <span class="mode-tag">MODE 1 • SINGLE PLAYER</span>
+                <h4>QUICK PLAY</h4>
+                <p>Slice meteors against the clock. Choose your virtual coin entry and win up to 1.8x virtual coins!</p>
+                <button class="continue-btn full-btn" id="dashGoQuickBtn" type="button">Enter Quick Play</button>
+              </div>
+              <div class="mode-card duel-card">
+                <span class="mode-tag">MODE 2 • MULTIPLAYER PVP</span>
+                <h4>DUEL ARENA</h4>
+                <p>Compete live 1v1 against real online players under identical conditions. Highest verified score wins!</p>
+                <button class="continue-btn full-btn duel-cta" id="dashGoDuelBtn" type="button">Enter Duel Arena</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- View: Mode 1 - Quick Play -->
+          <div class="hub-view hidden" id="viewQuickPlay">
+            <div class="section-block">
+              <h4>Select Virtual Coin Entry</h4>
+              <div class="entry-grid" id="qpEntryGrid"></div>
+            </div>
+
+            <div class="payout-preview" id="qpPreviewBox"></div>
+            <p class="form-status" id="qpStatus"></p>
+            <button class="continue-btn full-btn" id="startQuickPlayBtn" type="button">Confirm Entry &amp; Start Quick Play</button>
+          </div>
+
+          <!-- View: Mode 2 - Duel Arena -->
+          <div class="hub-view hidden" id="viewDuel">
+            <div class="rules-banner">
+              <strong>Duel Arena Rules (Live 1v1 Multiplayer):</strong>
+              <span id="duelRulesText">Matched against a real online player with the same entry amount. Equal waves &amp; timer. Highest verified score wins!</span>
+              <small id="duelFeeExplain">Platform virtual accounting fee: 10% of total pool. Ties refund both players 100%.</small>
+            </div>
+
+            <div id="duelLobbySetup">
+              <div class="section-block">
+                <h4>Select Duel Entry Amount</h4>
+                <div class="entry-grid" id="duelEntryGrid"></div>
+              </div>
+              <div class="payout-preview" id="duelPreviewBox"></div>
+              <p class="form-status" id="duelStatus"></p>
+              <button class="continue-btn full-btn duel-cta" id="joinDuelQueueBtn" type="button">Find Online Opponent</button>
+            </div>
+
+            <div id="duelQueueWaiting" class="hidden waiting-box">
+              <div class="radar-ring"></div>
+              <h4 id="duelWaitTitle">Searching for opponent...</h4>
+              <p id="duelWaitDetail">Escrowed 100 virtual coins • Matching equal entry</p>
+              <p class="wait-timer" id="duelWaitTimer">Elapsed: 0s</p>
+              <button class="mini-btn danger-outline" id="cancelDuelQueueBtn" type="button">Cancel &amp; Refund</button>
+            </div>
+
+            <div id="duelOpponentCard" class="hidden opponent-box">
+              <span class="mode-tag">OPPONENT FOUND</span>
+              <h4 id="duelOppName">@opponent</h4>
+              <p id="duelOppBadge">Lunar Cadet</p>
+              <p class="countdown-hint">Synchronizing cosmic wave seed...</p>
+            </div>
+          </div>
+
+          <!-- View: Virtual Wallet -->
+          <div class="hub-view hidden" id="viewWallet">
+            <div class="dash-stats-grid" id="walletSummaryGrid"></div>
+            <div class="rules-banner">
+              <strong>Non-Redeemable Virtual Coins</strong>
+              <small>Virtual coins are for entertainment inside Cosmic Slice only. They cannot be withdrawn, transferred, or exchanged for cash.</small>
+            </div>
+            <div class="section-block">
+              <h4>Immutable Transaction Ledger</h4>
+              <div class="list-stack" id="walletTxList"></div>
+            </div>
+          </div>
+
+          <!-- View: Daily Rewards & Missions -->
+          <div class="hub-view hidden" id="viewDaily">
+            <div class="profile-banner" id="dailyStreakBanner"></div>
+            <div class="list-stack" id="dailyRewardsList"></div>
+            <p class="form-status" id="dailyStatus"></p>
+          </div>
+
+          <!-- View: Leaderboard -->
+          <div class="hub-view hidden" id="viewLeaderboard">
+            <div class="filter-row">
+              <div class="auth-switch">
+                <button class="tab-pill active" id="lbPeriodAll" type="button">All-Time</button>
+                <button class="tab-pill" id="lbPeriodWeekly" type="button">Weekly</button>
+              </div>
+              <div class="auth-switch">
+                <button class="tab-pill active" id="lbLimit10" type="button">Top 10</button>
+                <button class="tab-pill" id="lbLimit50" type="button">Top 50</button>
+              </div>
+            </div>
+            <div class="list-stack" id="leaderboardList"></div>
+          </div>
+
+          <!-- View: Game History -->
+          <div class="hub-view hidden" id="viewHistory">
+            <div class="dash-stats-grid" id="historySummaryGrid"></div>
+            <div class="section-block">
+              <h4>Recent Matches</h4>
+              <div class="list-stack" id="matchHistoryList"></div>
+            </div>
+          </div>
+
+          <!-- View: User Profile & Settings -->
+          <div class="hub-view hidden" id="viewProfile">
+            <div class="profile-banner" id="profileInfoBanner"></div>
+            <form id="profileForm" class="cosmic-form">
+              <label class="field-label">Username
+                <input class="cosmic-input" type="text" id="profUsername" pattern="[a-zA-Z0-9_]{3,20}" required />
+              </label>
+              <label class="field-label">Avatar Glow
+                <select class="cosmic-input" id="profAvatarColor">
+                  <option value="#38bdf8">Nakshatra Cyan</option>
+                  <option value="#f59e0b">Solar Saffron</option>
+                  <option value="#34d399">Aurora Emerald</option>
+                  <option value="#6366f1">Astral Indigo</option>
+                  <option value="#fb7185">Nebula Coral</option>
+                </select>
+              </label>
+              <label class="toggle-row">
+                <input type="checkbox" id="profSoundToggle" />
+                <span>Enable Cosmic Sound Effects</span>
+              </label>
+              <button class="continue-btn full-btn" type="submit">Save Profile &amp; Settings</button>
+            </form>
+
+            <form id="passwordForm" class="cosmic-form" style="margin-top: 14px;">
+              <h4>Change Password</h4>
+              <label class="field-label">Current Password
+                <input class="cosmic-input" type="password" id="profCurPwd" required />
+              </label>
+              <label class="field-label">New Password (min 6 chars)
+                <input class="cosmic-input" type="password" id="profNewPwd" minlength="6" required />
+              </label>
+              <button class="mini-btn" type="submit">Update Password</button>
+            </form>
+
+            <p class="form-status" id="profileStatus"></p>
+            <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+              <button class="mini-btn danger-outline" id="logoutBtn" type="button">Log Out</button>
+            </div>
           </div>
         </div>
       </section>
     </main>
   </div>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script defer src="audio.js"></script>
   <script defer src="game.js"></script>
 </body>

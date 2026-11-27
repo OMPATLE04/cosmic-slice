@@ -8,23 +8,48 @@
   const dashboard = document.getElementById("dashboard");
   const refreshBtn = document.getElementById("refreshBtn");
 
-  const statGames = document.getElementById("statGames");
-  const statWinRate = document.getElementById("statWinRate");
-  const statCredited = document.getElementById("statCredited");
-  const statFlagged = document.getElementById("statFlagged");
+  const statUsers = document.getElementById("statUsers");
+  const statActiveUsers = document.getElementById("statActiveUsers");
+  const statMatches = document.getElementById("statMatches");
+  const statLiveDuels = document.getElementById("statLiveDuels");
+  const statQuickPlay = document.getElementById("statQuickPlay");
+  const statQuickPlayWin = document.getElementById("statQuickPlayWin");
+  const statDuels = document.getElementById("statDuels");
+  const statDuelTies = document.getElementById("statDuelTies");
+  const statIssued = document.getElementById("statIssued");
+  const statCirculating = document.getElementById("statCirculating");
+  const statSpent = document.getElementById("statSpent");
+  const statPlatformFees = document.getElementById("statPlatformFees");
+  const statFraud = document.getElementById("statFraud");
 
-  const tiersFields = document.getElementById("tiersFields");
-  const durationInput = document.getElementById("durationInput");
-  const targetScoreInput = document.getElementById("targetScoreInput");
-  const maxMistakesInput = document.getElementById("maxMistakesInput");
   const configForm = document.getElementById("configForm");
   const configStatus = document.getElementById("configStatus");
-  const resetHistoryBtn = document.getElementById("resetHistoryBtn");
+  const qpWinProb = document.getElementById("qpWinProb");
+  const qpMult = document.getElementById("qpMult");
+  const qpDuration = document.getElementById("qpDuration");
+  const qpTarget = document.getElementById("qpTarget");
+  const qpMistakes = document.getElementById("qpMistakes");
+  const duelFeePct = document.getElementById("duelFeePct");
+  const duelTimeout = document.getElementById("duelTimeout");
+  const entryOptionsInput = document.getElementById("entryOptionsInput");
+  const drLogin = document.getElementById("drLogin");
+  const drPlay3 = document.getElementById("drPlay3");
+  const drWin2 = document.getElementById("drWin2");
+  const diffSpeed = document.getElementById("diffSpeed");
+
+  const auditBody = document.getElementById("auditBody");
+  const usersBody = document.getElementById("usersBody");
   const historyBody = document.getElementById("historyBody");
-  const securityBody = document.getElementById("securityBody");
 
   let adminPin = "";
-  let currentConfig = null;
+
+  function esc(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
   async function api(path, options = {}) {
     const res = await fetch(path, {
@@ -43,76 +68,119 @@
   }
 
   function renderDashboard(data) {
-    currentConfig = data.config;
-    statGames.textContent = String(data.stats.totalGames);
-    statWinRate.textContent = `${data.stats.winRate}%`;
-    statCredited.textContent = `₹${data.wallet.totalCredited}`;
-    statFlagged.textContent = String(data.stats.flagged);
+    const s = data.stats || {};
+    const live = data.liveDuel || {};
+    statUsers.textContent = String(s.totalUsers || 0);
+    statActiveUsers.textContent = `${s.activeUsers24h || 0} active (24h)`;
+    statMatches.textContent = String(s.totalMatches || 0);
+    statLiveDuels.textContent = `${live.activeDuels || 0} active duels • ${live.queuedPlayers || 0} queued`;
+    statQuickPlay.textContent = String(s.quickPlayTotal || 0);
+    statQuickPlayWin.textContent = `${s.quickPlayWinRate || 0}% system win rate`;
+    statDuels.textContent = String(s.duelTotal || 0);
+    statDuelTies.textContent = `${s.duelTies || 0} ties refunded`;
+    statIssued.textContent = `${Number(s.totalCoinsIssued || 0).toLocaleString()} coins`;
+    statCirculating.textContent = `${Number(s.totalCirculatingCoins || 0).toLocaleString()} circulating`;
+    statSpent.textContent = `${Number(s.totalCoinsSpent || 0).toLocaleString()} coins`;
+    statPlatformFees.textContent = `${Number(s.totalDuelVirtualFees || 0).toLocaleString()} virtual fees`;
+    statFraud.textContent = String(s.fraudAlertsCount || 0);
 
-    durationInput.value = String(data.config.durationSeconds);
-    targetScoreInput.value = String(data.config.targetScore);
-    maxMistakesInput.value = String(data.config.maxMistakes);
+    const cfg = data.config || {};
+    const qp = cfg.quickPlay || {};
+    const da = cfg.duelArena || {};
+    const dr = cfg.dailyRewards || {};
+    const diff = cfg.difficulty || {};
 
-    tiersFields.innerHTML = "";
-    data.config.rewardTiers.forEach((tier, idx) => {
-      const row = document.createElement("div");
-      row.className = "field";
-      const label = document.createElement("label");
-      label.setAttribute("for", `tier_${idx}`);
-      label.textContent = `${tier.label} score reward (₹)`;
+    qpWinProb.value = String(qp.winProbabilityPct ?? 45);
+    qpMult.value = String(qp.payoutMultiplier ?? 1.8);
+    qpDuration.value = String(qp.durationSeconds ?? 45);
+    qpTarget.value = String(qp.targetScore ?? 95);
+    qpMistakes.value = String(qp.maxMistakes ?? 2);
 
-      const input = document.createElement("input");
-      input.type = "number";
-      input.id = `tier_${idx}`;
-      input.min = "0";
-      input.max = "10000";
-      input.value = String(tier.amount);
-      input.dataset.index = String(idx);
+    duelFeePct.value = String(da.platformFeePct ?? 10);
+    duelTimeout.value = String(da.matchmakingTimeoutSec ?? 45);
+    entryOptionsInput.value = (qp.entryOptions || [10, 20, 50, 100, 200, 500]).join(", ");
 
-      row.appendChild(label);
-      row.appendChild(input);
-      tiersFields.appendChild(row);
-    });
+    drLogin.value = String(dr.dailyLogin ?? 50);
+    drPlay3.value = String(dr.missionPlay3 ?? 30);
+    drWin2.value = String(dr.missionWin2 ?? 50);
+    diffSpeed.value = String(diff.speedScale ?? 1.0);
 
-    historyBody.innerHTML = "";
-    if (!data.history.length) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="8" style="color: var(--muted);">No completed games yet.</td>`;
-      historyBody.appendChild(tr);
+    auditBody.innerHTML = "";
+    const logs = data.auditLogs || [];
+    if (!logs.length) {
+      auditBody.innerHTML = `<tr><td colspan="4" style="color: var(--muted);">No audit or fraud logs yet.</td></tr>`;
     } else {
-      for (const h of data.history) {
+      for (const ev of logs.slice(0, 40)) {
         const tr = document.createElement("tr");
-        const shortId = h.gameId ? `${h.gameId.slice(0, 8)}…` : "-";
+        const timeStr = new Date(ev.createdAt).toLocaleString();
         tr.innerHTML = `
-          <td title="${h.gameId}"><code>${shortId}</code></td>
-          <td><span class="badge ${h.outcome}">${h.outcome.toUpperCase()}</span></td>
-          <td>${h.validatedScore} / ${h.targetScore}</td>
-          <td>${h.percentage}%</td>
-          <td>${h.mistakes} / ${h.maxMistakes}</td>
-          <td>${h.tierLabel}</td>
-          <td><strong>₹${h.rewardAmount}</strong></td>
-          <td style="color: var(--muted);">${h.lossReason || "Verified completion"}</td>
+          <td>${esc(timeStr)}</td>
+          <td><span class="badge ${esc(ev.category)}">${esc(ev.category)}</span></td>
+          <td>${esc(ev.action)}</td>
+          <td><code>${esc(ev.actorUserId)}</code></td>
         `;
-        historyBody.appendChild(tr);
+        auditBody.appendChild(tr);
       }
     }
 
-    securityBody.innerHTML = "";
-    if (!data.securityLog.length) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="3" style="color: var(--muted);">No security alerts recorded.</td>`;
-      securityBody.appendChild(tr);
+    usersBody.innerHTML = "";
+    const users = data.users || [];
+    if (!users.length) {
+      usersBody.innerHTML = `<tr><td colspan="8" style="color: var(--muted);">No registered players yet.</td></tr>`;
     } else {
-      for (const ev of data.securityLog.slice(0, 20)) {
+      for (const u of users) {
         const tr = document.createElement("tr");
-        const gid = ev.details && ev.details.gameId ? `${String(ev.details.gameId).slice(0, 8)}…` : "-";
-        const timeStr = new Date(ev.timestamp).toLocaleTimeString();
+        const nextStatus = u.status === "suspended" ? "active" : "suspended";
+        const btnLabel = u.status === "suspended" ? "Activate" : "Suspend";
         tr.innerHTML = `
-          <td>${timeStr}</td>
-          <td><span class="badge flagged">${ev.reason}</span></td>
-          <td><code>${gid}</code></td>
+          <td><code>${esc(u.userId)}</code></td>
+          <td><strong>${esc(u.username)}</strong></td>
+          <td style="color: var(--muted);">${esc(u.email)}</td>
+          <td><strong>${Number(u.wallet?.balance || 0).toLocaleString()}</strong></td>
+          <td>${Number(u.stats?.totalMatches || 0)} / ${Number(u.stats?.wins || 0)}</td>
+          <td>${Number(u.stats?.highestScore || 0)}</td>
+          <td><span class="badge ${esc(u.status)}">${esc(u.status).toUpperCase()}</span></td>
+          <td><button class="btn small ${u.status === "suspended" ? "primary" : "danger"}" data-uid="${esc(u.userId)}" data-next="${nextStatus}">${btnLabel}</button></td>
         `;
-        securityBody.appendChild(tr);
+        usersBody.appendChild(tr);
+      }
+      usersBody.querySelectorAll("button[data-uid]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const uid = btn.getAttribute("data-uid");
+          const next = btn.getAttribute("data-next");
+          try {
+            await api(`/api/admin/users/${encodeURIComponent(uid)}/status`, {
+              method: "POST",
+              body: JSON.stringify({ status: next })
+            });
+            await loadState();
+          } catch (err) {
+            configStatus.textContent = err.message;
+          }
+        });
+      });
+    }
+
+    historyBody.innerHTML = "";
+    const matches = data.recentMatches || [];
+    if (!matches.length) {
+      historyBody.innerHTML = `<tr><td colspan="8" style="color: var(--muted);">No completed matches yet.</td></tr>`;
+    } else {
+      for (const m of matches) {
+        const tr = document.createElement("tr");
+        const shortId = m.matchId ? `${m.matchId.slice(0, 8)}…` : "-";
+        const modeLabel = m.mode === "duel_arena" ? "DUEL ARENA" : "QUICK PLAY";
+        tr.innerHTML = `
+          <td title="${esc(m.matchId)}"><code>${esc(shortId)}</code></td>
+          <td>${modeLabel}</td>
+          <td>${esc(m.username)}</td>
+          <td>${esc(m.opponentUsername || "System RNG")}</td>
+          <td>${Number(m.entryAmount || 0)}</td>
+          <td>${Number(m.playerScore || 0)}</td>
+          <td><span class="badge ${esc(m.outcome)}">${esc(m.outcome).toUpperCase()}</span></td>
+          <td><strong>${Number(m.virtualReward || 0)} coins</strong></td>
+        `;
+        historyBody.appendChild(tr);
       }
     }
   }
@@ -145,39 +213,44 @@
 
   configForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!currentConfig) return;
     configStatus.textContent = "Saving...";
-    const nextTiers = currentConfig.rewardTiers.map((tier, idx) => {
-      const el = document.getElementById(`tier_${idx}`);
-      return {
-        ...tier,
-        amount: Number(el ? el.value : tier.amount)
-      };
-    });
+    const parsedEntries = entryOptionsInput.value
+      .split(",")
+      .map((s) => Number(s.trim()))
+      .filter((n) => Number.isFinite(n) && n >= 5);
 
     try {
       await api("/api/admin/config", {
         method: "POST",
         body: JSON.stringify({
-          durationSeconds: Number(durationInput.value),
-          targetScore: Number(targetScoreInput.value),
-          maxMistakes: Number(maxMistakesInput.value),
-          rewardTiers: nextTiers
+          quickPlay: {
+            winProbabilityPct: Number(qpWinProb.value),
+            payoutMultiplier: Number(qpMult.value),
+            durationSeconds: Number(qpDuration.value),
+            targetScore: Number(qpTarget.value),
+            maxMistakes: Number(qpMistakes.value),
+            entryOptions: parsedEntries
+          },
+          duelArena: {
+            platformFeePct: Number(duelFeePct.value),
+            matchmakingTimeoutSec: Number(duelTimeout.value),
+            durationSeconds: Number(qpDuration.value),
+            targetScore: Number(qpTarget.value),
+            maxMistakes: Number(qpMistakes.value),
+            entryOptions: parsedEntries
+          },
+          dailyRewards: {
+            dailyLogin: Number(drLogin.value),
+            missionPlay3: Number(drPlay3.value),
+            missionWin2: Number(drWin2.value)
+          },
+          difficulty: {
+            speedScale: Number(diffSpeed.value)
+          }
         })
       });
       await loadState();
-      configStatus.textContent = "Configuration saved and active immediately.";
-    } catch (err) {
-      configStatus.textContent = err.message;
-    }
-  });
-
-  resetHistoryBtn.addEventListener("click", async () => {
-    if (!confirm("Reset all stored game history, security logs, and credited wallet total?")) return;
-    try {
-      await api("/api/admin/reset-history", { method: "POST", body: "{}" });
-      await loadState();
-      configStatus.textContent = "History and ledger cleared.";
+      configStatus.textContent = "Configuration saved and recorded in Audit Logs.";
     } catch (err) {
       configStatus.textContent = err.message;
     }
