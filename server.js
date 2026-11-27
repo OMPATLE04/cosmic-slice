@@ -536,7 +536,16 @@ function createServerApp() {
     return next();
   });
 
-  app.use(express.static(ROOT_DIR, { etag: false, maxAge: 0 }));
+  app.use(
+    express.static(ROOT_DIR, {
+      etag: false,
+      lastModified: false,
+      maxAge: 0,
+      setHeaders: (res) => {
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      }
+    })
+  );
 
   // Global JSON error handler for API routes
   app.use("/api", (err, _req, res, _next) => {
