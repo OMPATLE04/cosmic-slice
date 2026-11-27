@@ -998,7 +998,8 @@ async function getAdminOverview() {
     userList,
     recentMatches,
     auditList,
-    walletSum
+    walletSum,
+    qpAccounting
   ] = await Promise.all([
     getAdminSettings(),
     users.countDocuments({}),
@@ -1035,6 +1036,18 @@ async function getAdminOverview() {
           }
         }
       ])
+      .toArray(),
+    gameHistory
+      .aggregate([
+        { $match: { mode: "quick_play" } },
+        {
+          $group: {
+            _id: null,
+            entries: { $sum: "$entryAmount" },
+            payouts: { $sum: "$virtualReward" }
+          }
+        }
+      ])
       .toArray()
   ]);
 
@@ -1047,6 +1060,9 @@ async function getAdminOverview() {
   }));
 
   const wTotals = walletSum[0] || { totalBalances: 0, totalEarned: 0, totalSpent: 0 };
+  const qpTotals = qpAccounting[0] || { entries: 0, payouts: 0 };
+  const quickPlayNetProfit = Number(qpTotals.entries || 0) - Number(qpTotals.payouts || 0);
+  const totalDuelVirtualFees = settings.platformAccounting.totalDuelVirtualFees || 0;
 
   return {
     config: {
@@ -1068,7 +1084,9 @@ async function getAdminOverview() {
       totalCoinsIssued: settings.platformAccounting.totalCoinsIssued || wTotals.totalEarned,
       totalCoinsSpent: settings.platformAccounting.totalCoinsSpent || wTotals.totalSpent,
       totalCirculatingCoins: wTotals.totalBalances,
-      totalDuelVirtualFees: settings.platformAccounting.totalDuelVirtualFees || 0,
+      totalDuelVirtualFees,
+      quickPlayNetProfit,
+      totalPlatformVirtualProfit: quickPlayNetProfit + totalDuelVirtualFees,
       fraudAlertsCount: auditList.filter((a) => a.category === "security").length
     },
     users: usersWithWallets,

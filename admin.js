@@ -16,6 +16,8 @@
   const statQuickPlayWin = document.getElementById("statQuickPlayWin");
   const statDuels = document.getElementById("statDuels");
   const statDuelTies = document.getElementById("statDuelTies");
+  const statPlatformProfit = document.getElementById("statPlatformProfit");
+  const statProfitBreakdown = document.getElementById("statProfitBreakdown");
   const statIssued = document.getElementById("statIssued");
   const statCirculating = document.getElementById("statCirculating");
   const statSpent = document.getElementById("statSpent");
@@ -78,10 +80,16 @@
     statQuickPlayWin.textContent = `${s.quickPlayWinRate || 0}% system win rate`;
     statDuels.textContent = String(s.duelTotal || 0);
     statDuelTies.textContent = `${s.duelTies || 0} ties refunded`;
-    statIssued.textContent = `${Number(s.totalCoinsIssued || 0).toLocaleString()} coins`;
-    statCirculating.textContent = `${Number(s.totalCirculatingCoins || 0).toLocaleString()} circulating`;
-    statSpent.textContent = `${Number(s.totalCoinsSpent || 0).toLocaleString()} coins`;
-    statPlatformFees.textContent = `${Number(s.totalDuelVirtualFees || 0).toLocaleString()} virtual fees`;
+    const totalProfit = Number(s.totalPlatformVirtualProfit || 0);
+    const qpNet = Number(s.quickPlayNetProfit || 0);
+    const duelFees = Number(s.totalDuelVirtualFees || 0);
+    statPlatformProfit.textContent = `${totalProfit >= 0 ? "" : "-"}₹${Math.abs(totalProfit).toLocaleString()}`;
+    statPlatformProfit.style.color = totalProfit >= 0 ? "var(--green)" : "var(--red)";
+    statProfitBreakdown.textContent = `QP: ${qpNet >= 0 ? "" : "-"}₹${Math.abs(qpNet).toLocaleString()} • Duel Fees: ₹${duelFees.toLocaleString()}`;
+    statIssued.textContent = `₹${Number(s.totalCoinsIssued || 0).toLocaleString()}`;
+    statCirculating.textContent = `₹${Number(s.totalCirculatingCoins || 0).toLocaleString()} circulating`;
+    statSpent.textContent = `₹${Number(s.totalCoinsSpent || 0).toLocaleString()}`;
+    statPlatformFees.textContent = `₹${duelFees.toLocaleString()} duel fees`;
     statFraud.textContent = String(s.fraudAlertsCount || 0);
 
     const cfg = data.config || {};

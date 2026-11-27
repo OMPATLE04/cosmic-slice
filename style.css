@@ -386,8 +386,17 @@ body {
 }
 
 @keyframes pulsePrompt {
-  0%, 100% { opacity: 0.82; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-3px); }
+
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
 }
 
 .mode-cta-row {
@@ -474,8 +483,15 @@ body {
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: translateY(14px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .outcome-badge {
@@ -915,7 +931,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .wait-timer {
