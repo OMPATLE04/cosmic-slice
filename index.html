@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Nakshatra Cut — Virtual Gaming Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="viewport-bg">
     <main class="game-shell" id="gameShell">
@@ -35,12 +38,14 @@
           <div class="shields-pill" id="shieldsPill" title="Moon Shields"></div>
           <div class="timer-pill" id="timerPill">45s</div>
           <button class="icon-btn" id="soundBtn" type="button" title="Toggle Sound" aria-label="Toggle Sound">
-            <svg id="soundOnIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg id="soundOnIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
             </svg>
-            <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg id="soundOffIcon" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
               <line x1="23" y1="9" x2="17" y2="15"></line>
               <line x1="17" y1="9" x2="23" y2="15"></line>
@@ -158,7 +163,8 @@
       </section>
 
       <!-- Platform Hub Modal (Auth, Dashboard, Modes, Quick Play, Duel, Wallet, Daily, Leaderboard, History, Profile/Settings) -->
-      <section class="modal-backdrop hidden" id="platformModal" role="dialog" aria-modal="true" aria-label="Cosmic Slice Platform">
+      <section class="modal-backdrop hidden" id="platformModal" role="dialog" aria-modal="true"
+        aria-label="Cosmic Slice Platform">
         <div class="modal-card platform-card">
           <div class="modal-header">
             <div>
@@ -184,23 +190,27 @@
 
             <form id="loginForm" class="cosmic-form">
               <label class="field-label">Username or Email
-                <input class="cosmic-input" type="text" id="loginIdentifier" placeholder="player_one or email@example.com" required />
+                <input class="cosmic-input" type="text" id="loginIdentifier"
+                  placeholder="player_one or email@example.com" required />
               </label>
               <label class="field-label">Password
-                <input class="cosmic-input" type="password" id="loginPassword" placeholder="Enter your password" required />
+                <input class="cosmic-input" type="password" id="loginPassword" placeholder="Enter your password"
+                  required />
               </label>
               <button class="continue-btn full-btn" type="submit">Sign In</button>
             </form>
 
             <form id="registerForm" class="cosmic-form hidden">
               <label class="field-label">Username (3–20 letters/numbers)
-                <input class="cosmic-input" type="text" id="regUsername" placeholder="cosmic_blade" pattern="[a-zA-Z0-9_]{3,20}" required />
+                <input class="cosmic-input" type="text" id="regUsername" placeholder="cosmic_blade"
+                  pattern="[a-zA-Z0-9_]{3,20}" required />
               </label>
               <label class="field-label">Email
                 <input class="cosmic-input" type="email" id="regEmail" placeholder="you@example.com" required />
               </label>
               <label class="field-label">Password (min 6 chars)
-                <input class="cosmic-input" type="password" id="regPassword" minlength="6" placeholder="Create password" required />
+                <input class="cosmic-input" type="password" id="regPassword" minlength="6" placeholder="Create password"
+                  required />
               </label>
               <label class="field-label">Avatar Glow
                 <select class="cosmic-input" id="regAvatarColor">
@@ -225,24 +235,24 @@
               <div class="mode-card">
                 <span class="mode-tag">MODE 1 • LUCK-BASED DRAW</span>
                 <h4>QUICK PLAY</h4>
-                <p>Slice meteoroids for score &amp; rank. Virtual coin rewards are decided by a random server draw (luck-based, not skill-based).</p>
+                <p>Slice meteoroids for score &amp; rank. Virtual coin rewards are decided by a random server draw
+                  (luck-based, not skill-based).</p>
                 <button class="continue-btn full-btn" id="dashGoQuickBtn" type="button">Enter Quick Play</button>
               </div>
               <div class="mode-card duel-card">
                 <span class="mode-tag">MODE 2 • MULTIPLAYER PVP</span>
                 <h4>DUEL ARENA</h4>
-                <p>Compete live 1v1 against real online players under identical conditions. Highest verified score wins!</p>
-                <button class="continue-btn full-btn duel-cta" id="dashGoDuelBtn" type="button">Enter Duel Arena</button>
+                <p>Compete live 1v1 against real online players under identical conditions. Highest verified score wins!
+                </p>
+                <button class="continue-btn full-btn duel-cta" id="dashGoDuelBtn" type="button">Enter Duel
+                  Arena</button>
               </div>
             </div>
           </div>
 
           <!-- View: Mode 1 - Quick Play -->
           <div class="hub-view hidden" id="viewQuickPlay">
-            <div class="rules-banner">
-              <strong>Luck-Based Random Outcome</strong>
-              <small>Quick Play coin outcomes are decided randomly by the server (45% win / 55% loss • 1.8x return). Slicing builds your score &amp; rank, not coin odds. Play responsibly.</small>
-            </div>
+
 
             <div class="section-block">
               <h4>Select Virtual Coin Entry</h4>
@@ -251,15 +261,18 @@
 
             <div class="payout-preview" id="qpPreviewBox"></div>
             <p class="form-status" id="qpStatus"></p>
-            <button class="continue-btn full-btn" id="startQuickPlayBtn" type="button">Confirm Entry &amp; Start Quick Play</button>
+            <button class="continue-btn full-btn" id="startQuickPlayBtn" type="button">Confirm Entry &amp; Start Quick
+              Play</button>
           </div>
 
           <!-- View: Mode 2 - Duel Arena -->
           <div class="hub-view hidden" id="viewDuel">
             <div class="rules-banner">
               <strong>Duel Arena Rules (Live 1v1 Multiplayer):</strong>
-              <span id="duelRulesText">Matched against a real online player with the same entry amount. Equal waves &amp; timer. Highest verified score wins!</span>
-              <small id="duelFeeExplain">Platform virtual accounting fee: 10% of total pool. Ties refund both players 100%.</small>
+              <span id="duelRulesText">Matched against a real online player with the same entry amount. Equal waves
+                &amp; timer. Highest verified score wins!</span>
+              <small id="duelFeeExplain">Platform virtual accounting fee: 10% of total pool. Ties refund both players
+                100%.</small>
             </div>
 
             <div id="duelLobbySetup">
@@ -269,7 +282,8 @@
               </div>
               <div class="payout-preview" id="duelPreviewBox"></div>
               <p class="form-status" id="duelStatus"></p>
-              <button class="continue-btn full-btn duel-cta" id="joinDuelQueueBtn" type="button">Find Online Opponent</button>
+              <button class="continue-btn full-btn duel-cta" id="joinDuelQueueBtn" type="button">Find Online
+                Opponent</button>
             </div>
 
             <div id="duelQueueWaiting" class="hidden waiting-box">
@@ -293,7 +307,8 @@
             <div class="dash-stats-grid" id="walletSummaryGrid"></div>
             <div class="rules-banner">
               <strong>Non-Redeemable Virtual Coins</strong>
-              <small>Virtual coins are for entertainment inside Cosmic Slice only. They cannot be withdrawn, transferred, or exchanged for cash.</small>
+              <small>Virtual coins are for entertainment inside Cosmic Slice only. They cannot be withdrawn,
+                transferred, or exchanged for cash.</small>
             </div>
             <div class="section-block">
               <h4>Immutable Transaction Ledger</h4>
@@ -380,4 +395,5 @@
   <script defer src="audio.js"></script>
   <script defer src="game.js"></script>
 </body>
+
 </html>
