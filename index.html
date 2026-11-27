@@ -230,9 +230,9 @@
             <div class="dash-stats-grid" id="dashStatsGrid"></div>
             <div class="mode-cards-grid">
               <div class="mode-card">
-                <span class="mode-tag">MODE 1 • SINGLE PLAYER</span>
+                <span class="mode-tag">MODE 1 • LUCK-BASED DRAW</span>
                 <h4>QUICK PLAY</h4>
-                <p>Slice meteors against the clock. Choose your virtual coin entry and win up to 1.8x virtual coins!</p>
+                <p>Slice meteoroids for score &amp; rank. Virtual coin rewards are decided by a random server draw (luck-based, not skill-based).</p>
                 <button class="continue-btn full-btn" id="dashGoQuickBtn" type="button">Enter Quick Play</button>
               </div>
               <div class="mode-card duel-card">
@@ -246,6 +246,11 @@
 
           <!-- View: Mode 1 - Quick Play -->
           <div class="hub-view hidden" id="viewQuickPlay">
+            <div class="rules-banner">
+              <strong>Luck-Based Random Outcome</strong>
+              <small>Quick Play coin outcomes are decided randomly by the server (45% win / 55% loss • 1.8x return). Slicing builds your score &amp; rank, not coin odds. Play responsibly.</small>
+            </div>
+
             <div class="section-block">
               <h4>Select Virtual Coin Entry</h4>
               <div class="entry-grid" id="qpEntryGrid"></div>

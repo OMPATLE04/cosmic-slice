@@ -571,7 +571,8 @@
     qpPreviewBox.innerHTML = `
       <div class="meta-row"><span>Your Balance</span><strong>₹${Number(currentWallet.balance || 0).toLocaleString()}</strong></div>
       <div class="meta-row"><span>Entry Amount</span><strong>₹${selectedQpEntry}</strong></div>
-      <div class="meta-row"><span>Win Reward</span><strong style="color:#4ade80;">+₹${winReturn} (${qp.payoutMultiplier}x)</strong></div>
+      <div class="meta-row"><span>Random Draw Win (${qp.winProbabilityPct}% chance)</span><strong style="color:#4ade80;">+₹${winReturn} (${qp.payoutMultiplier}x)</strong></div>
+      <div class="meta-row"><span>Random Draw Loss (${100 - qp.winProbabilityPct}% chance)</span><strong style="color:#fb7185;">₹0</strong></div>
     `;
   }
 
@@ -932,8 +933,8 @@
       });
 
       beginCountdown(
-        `QUICK PLAY • ${data.entryAmount} COINS`,
-        `Entry ${data.entryAmount} Coins • Win up to ${data.payoutMultiplier}x`,
+        `QUICK PLAY • ₹${data.entryAmount}`,
+        `Luck-Based Draw (${data.winProbabilityPct}% win • ${data.payoutMultiplier}x)`,
         2400
       );
     } catch (err) {
@@ -982,6 +983,8 @@
     finalTierEl.textContent = "Waiting for opponent finish";
     finalVerifiedEl.textContent = `${Number(currentWallet.balance || 0).toLocaleString()} Coins`;
     rngAuditRowEl.classList.add("hidden");
+    continueBtn.textContent = "Play Again";
+    continueBtn.dataset.action = "replay";
     setState("gameover");
   }
 
@@ -1013,6 +1016,8 @@
     finalTierEl.textContent = `₹${data.totalPool} (₹${data.platformVirtualFee} fee)`;
     finalVerifiedEl.textContent = `₹${Number(currentWallet.balance || 0).toLocaleString()}`;
     rngAuditRowEl.classList.add("hidden");
+    continueBtn.textContent = "Play Again";
+    continueBtn.dataset.action = "replay";
     setState("gameover");
   }
 
@@ -1052,6 +1057,8 @@
     finalTierEl.textContent = "Verifying match...";
     finalVerifiedEl.textContent = `${Number(currentWallet.balance || 0).toLocaleString()} Coins`;
     rngAuditRowEl.classList.add("hidden");
+    continueBtn.textContent = "Play Again";
+    continueBtn.dataset.action = "replay";
     setState("gameover");
 
     try {
@@ -1065,9 +1072,11 @@
 
       if (data.outcome === "won") {
         lastOutcome = "won";
-        outcomeBadgeEl.textContent = "QUICK PLAY WIN";
+        outcomeBadgeEl.textContent = "QUICK PLAY WIN (LUCK DRAW)";
         outcomeBadgeEl.classList.add("won");
         resultTitleEl.textContent = `You Win ₹${data.virtualReward}!`;
+        continueBtn.textContent = "Play Again";
+        continueBtn.dataset.action = "replay";
         spawnCelebrationSparks();
         audio.playStarBonus();
       } else if (data.outcome === "flagged") {
@@ -1075,19 +1084,23 @@
         outcomeBadgeEl.textContent = "ANTI-CHEAT BLOCKED";
         outcomeBadgeEl.classList.remove("won");
         resultTitleEl.textContent = "Score Rejected";
+        continueBtn.textContent = "Back to Home";
+        continueBtn.dataset.action = "home";
       } else {
         lastOutcome = "lost";
-        outcomeBadgeEl.textContent = "QUICK PLAY LOSS";
+        outcomeBadgeEl.textContent = "LUCK-BASED DRAW • NO WIN";
         outcomeBadgeEl.classList.remove("won");
-        resultTitleEl.textContent = "Better Luck Next Round";
+        resultTitleEl.textContent = "No Reward This Round";
+        continueBtn.textContent = "Back to Home";
+        continueBtn.dataset.action = "home";
       }
 
       lostReasonEl.textContent =
         data.outcome === "won"
-          ? `₹${data.virtualReward} added to your wallet!`
+          ? `₹${data.virtualReward} added to your wallet via random server draw.`
           : data.outcome === "flagged"
             ? data.lossReason
-            : "Better luck next round!";
+            : "Decided by random server draw (luck-based). Play for fun — never chase losses.";
       finalScoreEl.textContent = `${data.validatedScore}/${data.targetScore}`;
       finalPctEl.textContent = `${data.percentage}%`;
       finalRewardEl.textContent = data.virtualReward > 0 ? `+₹${data.virtualReward}` : "₹0";
@@ -2313,8 +2326,11 @@
   // Result Overlay Buttons
   continueBtn.addEventListener("click", () => {
     audio.playClick();
+    const action = continueBtn.dataset.action;
     resetToTitle();
-    openHub(lastPlayedMode === "duel_arena" ? "duel" : "quickplay");
+    if (action !== "home") {
+      openHub(lastPlayedMode === "duel_arena" ? "duel" : "quickplay");
+    }
   });
   resultSwitchModeBtn.addEventListener("click", () => {
     resetToTitle();
