@@ -38,9 +38,6 @@
   const shieldLegendTextEl = document.getElementById("shieldLegendText");
   const ctaQuickPlayBtn = document.getElementById("ctaQuickPlayBtn");
   const ctaDuelBtn = document.getElementById("ctaDuelBtn");
-  const openDashboardBtn = document.getElementById("openDashboardBtn");
-  const openHistoryBtn = document.getElementById("openHistoryBtn");
-  const openSettingsBtn = document.getElementById("openSettingsBtn");
 
   // Game Over / Result Overlay
   const gameoverOverlay = document.getElementById("gameoverOverlay");
@@ -2319,9 +2316,6 @@
   openAuthOrProfileBtn.addEventListener("click", () => openHub(currentUser ? "profile" : "auth"));
   ctaQuickPlayBtn.addEventListener("click", () => openHub("quickplay"));
   ctaDuelBtn.addEventListener("click", () => openHub("duel"));
-  openDashboardBtn.addEventListener("click", () => openHub("dashboard"));
-  openHistoryBtn.addEventListener("click", () => openHub("history"));
-  openSettingsBtn.addEventListener("click", () => openHub("profile"));
 
   // Result Overlay Buttons
   continueBtn.addEventListener("click", () => {
